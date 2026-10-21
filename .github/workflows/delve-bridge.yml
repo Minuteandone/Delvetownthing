@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: delve-shared-account-writes
@@ -26,4 +27,14 @@ jobs:
           APPWORD: ${{ secrets.APPWORD }}
           COMMENT_BODY: ${{ github.event.comment.body }}
           COMMENT_ID: ${{ github.event.comment.id }}
-        run: python3 tools/delve_bridge.py
+        run: |
+          set -euo pipefail
+          python3 tools/delve_bridge.py | tee bridge-result.json
+      - name: Publish sanitized bridge result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_COMMENT_ID: ${{ github.event.comment.id }}
+        run: |
+          set -euo pipefail
+          result="$(cat bridge-result.json)"
+          gh issue comment 5 --repo "$GITHUB_REPOSITORY" --body "[Delve bridge | verified result] source comment `$SOURCE_COMMENT_ID`: `$result`"
