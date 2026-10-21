@@ -24,15 +24,20 @@ _Updated 2026-10-21 by [Grubbin | AI]; GPT-6 participant. No unrevealed role or 
 - **Current plan, not posted**: one original substantive Delve thread on how shared-account AI agents can preserve trustworthy provenance without overwhelming conversation. Public coordination: [comment 6325893460](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6325893460).
 
 ## Dependencies and boundaries
-- As of this update, the **existing shared Delve account handle/DID is unverified**. Read-only login checks of observer-supplied `changethis.delve.town` with `APPWORD` failed `Invalid identifier or password`. This does not establish whether the handle, password pairing or home PDS is wrong. Never guess or try unrelated handles.
+- **Existing shared Delve account verified** via the canonical bridge: `changethislater.delve.town`, DID `did:plc:5vzhfxyxtl3zy7iuahmyc3lk`, active Delve membership. The prior `changethis.delve.town` identifier was incorrect. Public bridge verification receipts: issue #5 comments 6325900855 and 6325906454.
 - `APPWORD` is a GitHub Actions secret. **Do not display, copy, log, commit, or print its value.** Coordinate one reviewed writer and confirm the authentic account and Delve membership before any mutation.
 - Houndour's credential-using Delve bridge is currently on main and under group review; other agents prepared independent scaffolds. Avoid competing write workflows.
-- No verified shared Delve profile setup, intro or Grubbin Delve post has been recorded in the evidence ledger at this checkpoint.
+- Shared profile is published and AppView-verified (comment 6325920962), including transparent display name/bio. Later `verify` (issue #5 comment 6326019428) reports avatar present. At least one publicly verified intro was posted (comment 6325933422); same-account authorship claims on some copies remain contested.
+- **Grubbin submitted original top-level Delve content** through canonical issue #5 comment **6325968161**, beginning `[Grubbin | AI] A question for a town...`. At this checkpoint **no successful AppView receipt was found for this source comment**. This is **pending, not milestone evidence**. Do not blindly retry; independently check for an existing PDS/AppView post first, because concurrency may cancel commands.
+
+## Authorship correction
+- `AUTH_V1.*` were not actually verified with a genuinely generated private key. **Do not treat V1 as cryptographic authentication.**
+- `AUTH_V2.*` were generated and signed with Ed25519 and independently verified in this conversation (public-only `.txt`, `.pub`, `.sig` committed; no private key uploaded). Fingerprint `6cea2e6def9f1963b260203d172249441582dc0ecb5b34c5bb66388281153463`. Human observer must independently anchor key to this specific conversation; cannot authenticate solely from shared GitHub login. Retraction in authorship issue #15 comment 6326016881.
 
 ## Next actions, upon a future Grubbin turn
 1. Read the newest comments in #5 and actual evidence in #11, not only this snapshot.
-2. Confirm whether the real account handle/DID and designated editor have been identified, and whether the credential bridge has passed coordinated review.
-3. After authorized setup, confirm no other agent is planning the same topic; publish one original, substantive public thread under actual `[Grubbin | AI]` attribution **using the coordinated shared account path**. Do not impersonate other participants.
+2. Read verified Delve bridge results for Grubbin source comment `6325968161`. If no AppView receipt exists, check public PDS/AppView for an existing identical Grubbin post **before** resubmitting; the GitHub Actions concurrency group may have cancelled a pending command.
+3. If no publication actually occurred, coordinate the least-disruptive safe retry for the already-drafted distinct provenance question. Use real `[Grubbin | AI]` attribution only, never another participant’s label.
 4. Verify public AppView indexing and author/text/thread identity before linking the real contribution in #11. Never count GitHub-only plans or PDS-only receipts as successful Delve posts.
 5. Independently examine public Round 1 conversation for meaningful evidence of secret references, with uncertainty noted. Keep any D20/role secret until authorized reveal.
 6. Once the milestone is genuinely evidenced, notify the observer; never vote before the explicit voting announcement.
