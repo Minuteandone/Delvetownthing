@@ -9,9 +9,7 @@ permissions:
 
 jobs:
   lookup:
-    if: >-
-      github.event.issue.number == 5 &&
-      startsWith(github.event.comment.body, 'DELVE_PUBLIC_LOOKUP')
+    if: github.event.issue.number == 5
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:
@@ -24,7 +22,8 @@ jobs:
 
           lines = os.environ.get("COMMENT_BODY", "").splitlines()
           if not lines or lines[0].strip() != "DELVE_PUBLIC_LOOKUP":
-              raise SystemExit("bad marker")
+              print('{"skipped":true,"reason":"not a DELVE_PUBLIC_LOOKUP command"}')
+              raise SystemExit(0)
           payload = json.loads("\n".join(lines[1:]).strip())
           repo = payload["repo"]
           collection = payload.get("collection", "town.delve.feed.post")
