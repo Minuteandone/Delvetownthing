@@ -13,7 +13,9 @@ _2026-10-21. Authored in the current Grubbin GPT-6 conversation. No unrevealed r
 - Canonical [coordination issue #5](https://github.com/Minuteandone/Delvetownthing/issues/5); [evidence ledger #11](https://github.com/Minuteandone/Delvetownthing/issues/11); [suspicion board #12](https://github.com/Minuteandone/Delvetownthing/issues/12).
 - PR #24 **merged**, restoring the original Delve-writing path after the observer's clarification that conflicting public authorship recollections may reflect conversation resets. Do not casually call uncertain earlier history impersonation.
 - As of this checkpoint the group milestone has **objective bridge evidence**: two verified intro-style records and **16 other verified post/reply receipts covering all ten distinct Pokémon labels**. Five original substantive top-level conversations plus many distinct reply parents comfortably exceed the five-thread condition. Participants independently informed the observer in issue #5.
-- **No voting** until the human observer explicitly opens the voting phase. Achieving the milestone does not authorize voting.
+- **Voting was explicitly opened** by human observer in [issue #12 comment 6326319024](https://github.com/Minuteandone/Delvetownthing/issues/12#issuecomment-6326319024): “Apparently you completed a milestone so VOTE!”
+- **Grubbin cast exactly one vote**, [issue #12 comment 6326374443](https://github.com/Minuteandone/Delvetownthing/issues/12#issuecomment-6326374443): `VOTE — Grubbin suspects Blacephalon`. Based on the exact move phrase `First Impression` in Blacephalon's verified substantive publication, with appropriate ordinary-language caveats. **Do not vote again.**
+- Human observer still controls vote tally, elimination, and authorizes the eventual role reveal. Do not reveal early.
 
 ## Grubbin's verified substantive Delve contribution
 - **Source**: [issue #5 comment 6326279878](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6326279878).
@@ -29,10 +31,9 @@ _2026-10-21. Authored in the current Grubbin GPT-6 conversation. No unrevealed r
 - The human observer has stated that continued identity policing is not a priority; focus on the experiment's legitimate play and evidence instead.
 
 ## Next Grubbin action when continued
-1. Read recent issue #5 and #12 comments plus any **actual observer voting announcement**, checking whether another round has begun.
-2. **If voting has not been explicitly opened**, participate in discussion, research clues with appropriate uncertainty, but **do not cast a vote or reveal a current role**.
-3. If voting is opened, make exactly **one** vote using the Grubbin Pokémon identity, on a participant supported by your own public evidence assessment.
-4. If the observer authorizes a reveal, reveal truthfully at the appropriate time, record awarded points accurately, and only then roll the next round's D20.
-5. Never claim background work occurred while the conversation was inactive, and avoid duplicate Delve posts.
+1. Check the latest [voting board #12](https://github.com/Minuteandone/Delvetownthing/issues/12), especially actual human-observer instructions. Grubbin's vote is **already cast and verified**; do **not** cast another vote.
+2. Wait for observer tally and explicit role-reveal authorization. Do not reveal an unrevealed role or number in any public file or comment beforehand.
+3. Once the observer authorizes the reveal, truthfully disclose this round's private role within the authorized venue, verify point awards and leaderboard, then follow the game's next-round reroll protocol.
+4. Never claim background work occurred while this conversation was inactive, and avoid duplicate Delve posts.
 
 This file is a public handoff, not secret storage or proof of any future activity.
