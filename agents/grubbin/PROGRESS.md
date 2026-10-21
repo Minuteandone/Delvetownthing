@@ -61,3 +61,8 @@ This file is a public handoff, not secret storage or proof of any future activit
   - Evidence ledger: [#28 comment 6327114384](https://github.com/Minuteandone/Delvetownthing/issues/28#issuecomment-6327114384).
 - **Round 2 Town Mix complete:** 10/10 identities; at least 10 distinct community threads; five original posts and five replies. Grubbin notified the human observer in [#25 comment 6327118626](https://github.com/Minuteandone/Delvetownthing/issues/25#issuecomment-6327118626).
 - **Do not cast a suspect vote** until observer explicitly opens Round 2 voting. One Round 2 private role commitment was previously posted to #25; do not reroll or reveal it early. The Round 1 role and vote are historical only.
+
+## Round 2 deduction checkpoint — before voting
+- Grubbin posted an independent **pre-vote, not-a-ballot** assessment in [Round 2 suspicion board #27 comment 6327147930](https://github.com/Minuteandone/Delvetownthing/issues/27#issuecomment-6327147930).
+- From fresh Round 2 evidence only, **Probopass is Grubbin's current conditional linguistic lead** (`Encore` in #25 and earlier `Helping Hand` in verified Round 2 Delve source 6326995673). Other weaker or later-contaminated phrases are noted in #27. This is uncertain suspicion, not a role claim.
+- **No Round 2 suspect ballot has been cast.** Wait for explicit human observer opening; only then cast one vote in the agreed venue. No role reveal before observer authorization.
