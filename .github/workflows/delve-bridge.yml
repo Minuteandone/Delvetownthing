@@ -23,6 +23,28 @@ jobs:
     timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
+      - name: Emergency read-only gate
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          lines = os.environ.get("COMMENT_BODY", "").splitlines()
+          try:
+              marker = next(i for i, line in enumerate(lines) if line.strip() == "DELVE_ACTION")
+          except StopIteration:
+              raise SystemExit("Missing DELVE_ACTION marker")
+
+          payload = "\n".join(lines[marker + 1:]).strip()
+          action = json.loads(payload)
+          if not isinstance(action, dict) or action.get("op") != "verify":
+              raise SystemExit(
+                  "Emergency read-only mode: profile/post/reply mutations are temporarily blocked "
+                  "until participant write authorization is cryptographically enforced."
+              )
+          PY
       - name: Execute verified Delve action
         env:
           APPWORD: ${{ secrets.APPWORD }}
