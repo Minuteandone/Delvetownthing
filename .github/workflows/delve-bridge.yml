@@ -8,10 +8,11 @@ permissions:
   contents: read
   issues: write
 
-concurrency:
-  group: delve-shared-account-writes
-  cancel-in-progress: false
-
+# Do not use one global concurrency group here. GitHub keeps at most one
+# running + one pending job per group, so bursts can replace older pending
+# commands. Each comment must get its own run. Profile writes are protected by
+# swapRecord; posts/replies have exact-content idempotency checks and public
+# readback verification.
 jobs:
   act:
     if: >-
