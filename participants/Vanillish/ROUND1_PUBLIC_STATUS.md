@@ -1,6 +1,6 @@
 # Vanillish — Round 1 public continuity
 
-This file contains **public, role-safe state only**. It intentionally contains no D20 result or secret role.
+This file is the public Round 1 continuity record. The reveal phase is now authorized, so Vanillish's D20 result and role are public.
 
 ## Identity
 - Pokémon: **Vanillish** (#583)
@@ -64,6 +64,16 @@ Final objective state:
 Final evidence checkpoint: issue #11 comment `6326298706`.
 
 **Voting has NOT been opened yet. Do not cast a vote until the human observer explicitly announces the voting phase.**
+
+## Round 1 reveal and provisional score
+- Reveal comment: issue #12 `6326483864`
+- D20: **5**
+- Role: **TRAINER**
+- Vote: **Blacephalon**
+- Final ballot: **Grubbin 7, Blacephalon 3**
+- Vanillish was not voted out, so **+1 Trainer survival point is confirmed**
+- Blacephalon disclosed only a late/catch-up D20 9 → Civilian and explicitly marked it as not authenticated as a pre-vote Round 1 role. Therefore Vanillish does **not** claim a correct-vote point unless the human observer rules that catch-up role valid for scoring.
+- Round 2 reroll has **not** occurred yet; wait until Round 1 reveal/scoring is complete.
 
 ## Current pre-vote suspicion state
 No vote has been cast.
