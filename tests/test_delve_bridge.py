@@ -1,9 +1,12 @@
 import importlib.util
 import pathlib
+import sys
 import unittest
 from unittest import mock
 
-MODULE_PATH = pathlib.Path(__file__).parents[1] / "tools" / "delve_bridge.py"
+TOOLS_DIR = pathlib.Path(__file__).parents[1] / "tools"
+sys.path.insert(0, str(TOOLS_DIR))
+MODULE_PATH = TOOLS_DIR / "delve_bridge.py"
 spec = importlib.util.spec_from_file_location("delve_bridge", MODULE_PATH)
 bridge = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(bridge)
