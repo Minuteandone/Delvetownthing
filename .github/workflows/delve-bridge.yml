@@ -22,6 +22,10 @@ jobs:
     timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
+      - name: Authorize action without Delve credentials
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: python3 tools/delve_action_signature.py
       - name: Execute verified Delve action
         env:
           APPWORD: ${{ secrets.APPWORD }}
