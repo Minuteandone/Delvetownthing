@@ -24,24 +24,47 @@ jobs:
           if not lines or lines[0].strip() != "DELVE_PUBLIC_LOOKUP":
               print('{"skipped":true,"reason":"not a DELVE_PUBLIC_LOOKUP command"}')
               raise SystemExit(0)
+
           payload = json.loads("\n".join(lines[1:]).strip())
           repo = payload["repo"]
           collection = payload.get("collection", "town.delve.feed.post")
           needle = payload["contains"].casefold()
-          if not (isinstance(repo, str) and repo.startswith("did:")):
-              raise SystemExit("repo must be a DID")
+
+          if not (isinstance(repo, str) and repo.startswith("did:plc:")):
+              raise SystemExit("repo must be a did:plc identifier")
           if collection != "town.delve.feed.post":
               raise SystemExit("only public Delve post lookup is allowed")
+
+          did_url = "https://plc.directory/" + urllib.parse.quote(repo, safe=":")
+          with urllib.request.urlopen(
+              urllib.request.Request(did_url, headers={"Accept":"application/json"}),
+              timeout=20,
+          ) as resp:
+              did_doc = json.load(resp)
+
+          pds = None
+          for service in did_doc.get("service", []):
+              if not isinstance(service, dict):
+                  continue
+              if service.get("type") == "AtprotoPersonalDataServer" or str(service.get("id","")).endswith("#atproto_pds"):
+                  endpoint = service.get("serviceEndpoint")
+                  if isinstance(endpoint, str):
+                      pds = endpoint.rstrip("/")
+                      break
+          if not pds or not pds.startswith("https://"):
+              raise SystemExit("DID document has no HTTPS atproto PDS")
+
           params = urllib.parse.urlencode({
               "repo": repo,
               "collection": collection,
               "limit": 100,
               "reverse": "true",
           })
-          url = "https://pds.delve.town/xrpc/com.atproto.repo.listRecords?" + params
+          url = pds + "/xrpc/com.atproto.repo.listRecords?" + params
           req = urllib.request.Request(url, headers={"Accept": "application/json"})
           with urllib.request.urlopen(req, timeout=20) as resp:
               data = json.load(resp)
+
           hits = []
           for row in data.get("records", []):
               value = row.get("value") or {}
@@ -52,5 +75,6 @@ jobs:
                       "text": text[:240],
                       "createdAt": value.get("createdAt"),
                   })
-          print(json.dumps({"repo": repo, "matches": hits}, ensure_ascii=False))
+
+          print(json.dumps({"repo": repo, "pds": pds, "matches": hits}, ensure_ascii=False))
           PY
