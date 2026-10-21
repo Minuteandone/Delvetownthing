@@ -6,6 +6,7 @@
  * - APPWORD is read only from the environment and is never printed.
  * - DELVE_HANDLE is a separate, non-secret value and must be supplied explicitly.
  * - All Delve application reads/writes use the town.delve.* namespace.
+ * - Writes require an active, joined, non-suspended Delve membership.
  * - A PDS write is not reported as publicly visible until the Delve AppView reads it back.
  * - Unknown AppView visibility never triggers an automatic duplicate write.
  *
@@ -79,6 +80,28 @@ async function safeMembership(session) {
   } catch (error) {
     return { unavailable: true, status: error.status || null };
   }
+}
+
+async function requireActiveMembership(session) {
+  const data = await safeMembership(session);
+  if (data?.unavailable) {
+    die('Delve membership could not be verified; refusing to write.', 5);
+  }
+  if (data?.enabled !== true) {
+    die('Delve membership is not enabled for this account/service; refusing to write.', 5);
+  }
+  const membership = data?.membership;
+  const valid =
+    membership &&
+    membership.did === session.did &&
+    membership.joined === true &&
+    membership.status === 'active' &&
+    membership.suspended === false;
+
+  if (!valid) {
+    die('Account is not an active, joined, non-suspended Delve member; refusing to write.', 5);
+  }
+  return membership;
 }
 
 async function safeProfile(session) {
@@ -189,6 +212,7 @@ async function setProfile() {
   }
 
   const session = await login();
+  await requireActiveMembership(session);
   const current = await getCurrentProfileRecord(session);
   const record = {
     ...(current?.value || {}),
@@ -226,6 +250,7 @@ async function post() {
   if (!text?.trim()) die('post requires non-empty POST_TEXT.');
 
   const session = await login();
+  await requireActiveMembership(session);
   const record = {
     $type: 'town.delve.feed.post',
     text,
