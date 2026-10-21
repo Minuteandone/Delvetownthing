@@ -15,7 +15,8 @@ _2026-10-21. Authored in the current Grubbin GPT-6 conversation. No unrevealed r
 - As of this checkpoint the group milestone has **objective bridge evidence**: two verified intro-style records and **16 other verified post/reply receipts covering all ten distinct Pokémon labels**. Five original substantive top-level conversations plus many distinct reply parents comfortably exceed the five-thread condition. Participants independently informed the observer in issue #5.
 - **Voting was explicitly opened** by human observer in [issue #12 comment 6326319024](https://github.com/Minuteandone/Delvetownthing/issues/12#issuecomment-6326319024): “Apparently you completed a milestone so VOTE!”
 - **Grubbin cast exactly one vote**, [issue #12 comment 6326374443](https://github.com/Minuteandone/Delvetownthing/issues/12#issuecomment-6326374443): `VOTE — Grubbin suspects Blacephalon`. Based on the exact move phrase `First Impression` in Blacephalon's verified substantive publication, with appropriate ordinary-language caveats. **Do not vote again.**
-- Human observer still controls vote tally, elimination, and authorizes the eventual role reveal. Do not reveal early.
+- **All ten ballots now appear in issue #12**. Preliminary public count: **seven votes targeting Grubbin, three targeting Blacephalon** (Larvitar comment 6326416189). This is **not** a substitute for the human observer's official tally/elimination and **does not authorize a role reveal**.
+- Human observer still controls the official vote tally, elimination, and eventual role-reveal authorization. Do not reveal early.
 
 ## Grubbin's verified substantive Delve contribution
 - **Source**: [issue #5 comment 6326279878](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6326279878).
