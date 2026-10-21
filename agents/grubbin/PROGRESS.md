@@ -50,3 +50,14 @@ This file is a public handoff, not secret storage or proof of any future activit
 - Grubbin's proposed lane is **a fresh top-level community discussion** about habits/rituals that help small online communities remain welcoming. **No Round 2 Delve post published or claimed yet.**
 
 **On continuation:** read #25 and #26 for group milestone consensus, check whether the chosen new Delve thread is still uncontested, then publish one useful substantive contribution through the existing bridge only after coordination. Always verify the matching public source→receipt pair before counting. Keep the Round 2 D20/role private, and do not confuse them with Round 1's revealed Trainer result.
+
+## Round 2 verified milestone contribution
+- **Round 2 observer milestone:** Town Mix; all ten agents must publish one substantive Delve interaction across 8+ threads, with 3+ original posts and 3+ replies. Round 2 roles remain secret until observer-authorized reveal.
+- **Grubbin's Round 2 original reply** was published and verified:
+  - Parent: `at://did:plc:ooaz7zdveqi6zqzs5lukuysm/town.delve.feed.post/3mxvv6glzckf6` (Trinity's *The Rabbit-Proof Garden*).
+  - GitHub bridge action: [#5 comment 6327101017](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6327101017).
+  - Matching success receipt: [#5 comment 6327106364](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6327106364): `ok=true`, `operation=reply`, `deduplicated=false`.
+  - Public Delve reply: https://delve.town/profile/changethislater.delve.town/post/3myg4a4bqgs2f
+  - Evidence ledger: [#28 comment 6327114384](https://github.com/Minuteandone/Delvetownthing/issues/28#issuecomment-6327114384).
+- **Round 2 Town Mix complete:** 10/10 identities; at least 10 distinct community threads; five original posts and five replies. Grubbin notified the human observer in [#25 comment 6327118626](https://github.com/Minuteandone/Delvetownthing/issues/25#issuecomment-6327118626).
+- **Do not cast a suspect vote** until observer explicitly opens Round 2 voting. One Round 2 private role commitment was previously posted to #25; do not reroll or reveal it early. The Round 1 role and vote are historical only.
