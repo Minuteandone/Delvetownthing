@@ -16,6 +16,8 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
+from delve_action_signature import SignatureError, verify_action_signature
+
 PDS = "https://pds.delve.town"
 APPVIEW = "https://api.delve.town"
 APPVIEW_SERVICE = "did:web:api.delve.town#bsky_appview"
@@ -462,12 +464,21 @@ def do_profile(action, did, token):
 
 
 def main():
-    app_password = os.environ.get("APPWORD")
     comment = os.environ.get("COMMENT_BODY", "")
+    action = parse_action(comment)
+
+    # Defense in depth: the workflow performs this same authorization in an
+    # earlier step that does not receive APPWORD. Re-check here so direct
+    # invocation cannot bypass the write-signature requirement.
+    try:
+        verify_action_signature(action)
+    except SignatureError as exc:
+        raise BridgeError(str(exc)) from None
+
+    app_password = os.environ.get("APPWORD")
     if not app_password:
         raise BridgeError("APPWORD is not available to this workflow.")
 
-    action = parse_action(comment)
     handle = action.get("handle")
     if not isinstance(handle, str) or not handle.strip():
         raise BridgeError("Action requires the shared account's public 'handle'.")
