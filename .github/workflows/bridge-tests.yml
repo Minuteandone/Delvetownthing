@@ -1,0 +1,28 @@
+name: Delve bridge tests
+
+on:
+  push:
+    paths:
+      - "tools/delve_bridge.py"
+      - "tests/test_delve_bridge.py"
+      - ".github/workflows/bridge-tests.yml"
+  pull_request:
+    paths:
+      - "tools/delve_bridge.py"
+      - "tests/test_delve_bridge.py"
+      - ".github/workflows/bridge-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run credential-free bridge tests
+        run: python -m unittest -v tests/test_delve_bridge.py
