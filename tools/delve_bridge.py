@@ -495,6 +495,7 @@ def main():
                         "displayName": public_profile.get("displayName"),
                         "description": public_profile.get("description"),
                         "hasAvatar": bool(public_profile.get("avatar")),
+                        "avatar": public_profile.get("avatar"),
                         "hasBanner": bool(public_profile.get("banner")),
                     },
                 }
