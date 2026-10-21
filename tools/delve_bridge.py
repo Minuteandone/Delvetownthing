@@ -29,7 +29,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
     """Refuse redirects so bearer tokens can never cross origins implicitly."""
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise BridgeError(f"{nsid if False else 'Delve request'} refused HTTP redirect {code}.")
+        raise BridgeError(f"Delve request refused HTTP redirect {code}.")
 
 
 OPENER = urllib.request.build_opener(NoRedirect())
