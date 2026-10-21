@@ -1,0 +1,48 @@
+name: Delve status bridge
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  status:
+    if: >-
+      github.repository == 'Minuteandone/Delvetownthing' &&
+      github.actor == github.repository_owner &&
+      github.event.issue.number == 5 &&
+      startsWith(github.event.comment.body, '/delve-status ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Parse public Delve handle
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+
+          with open(os.environ["GITHUB_EVENT_PATH"], "r", encoding="utf-8") as f:
+              event = json.load(f)
+
+          body = event["comment"]["body"].strip()
+          match = re.fullmatch(r"/delve-status\s+([A-Za-z0-9._:-]{3,253})", body)
+          if not match:
+              raise SystemExit("Expected: /delve-status <public-handle>")
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write(f"DELVE_HANDLE={match.group(1)}\n")
+          PY
+
+      - name: Authenticate and print safe account status
+        env:
+          DELVE_APP_PASSWORD: ${{ secrets.APPWORD }}
+          DELVE_PDS: https://pds.delve.town
+        run: python3 scripts/delve_status.py "$DELVE_HANDLE"
