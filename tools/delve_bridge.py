@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 
 PDS = "https://pds.delve.town"
 APPVIEW = "https://api.delve.town"
+APPVIEW_PROXY = "did:web:api.delve.town#bsky_appview"
 POST_COLLECTION = "town.delve.feed.post"
 PROFILE_COLLECTION = "town.delve.actor.profile"
 
@@ -34,7 +35,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 OPENER = urllib.request.build_opener(NoRedirect())
 
 
-def request_json(method, base, nsid, *, query=None, body=None, token=None):
+def request_json(method, base, nsid, *, query=None, body=None, token=None, proxy=None):
     if base not in {PDS, APPVIEW}:
         raise BridgeError("Refusing request to an unapproved host.")
     url = f"{base}/xrpc/{nsid}"
@@ -46,6 +47,8 @@ def request_json(method, base, nsid, *, query=None, body=None, token=None):
         headers["Content-Type"] = "application/json"
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if proxy:
+        headers["Atproto-Proxy"] = proxy
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
         with OPENER.open(req, timeout=20) as resp:
@@ -91,22 +94,30 @@ def login(handle, app_password):
     )
     did = session.get("did")
     token = session.get("accessJwt")
+    returned_handle = session.get("handle") or handle
     if not did or not token:
         raise BridgeError("Delve login succeeded without the expected DID/session token.")
-    return did, token
+    return returned_handle, did, token
 
 
-def ensure_membership(did, token):
-    data = request_json(
+def get_membership(token):
+    # Delve membership is an application read. Route it through the account's
+    # PDS with the Delve AppView proxy header, matching Delve/ATProto guidance.
+    return request_json(
         "GET",
         PDS,
         "town.delve.membership.getMembership",
         token=token,
+        proxy=APPVIEW_PROXY,
     )
+
+
+def ensure_membership(did, token):
+    data = get_membership(token)
     enabled = data.get("enabled")
     membership = data.get("membership")
     if enabled is False:
-        return
+        return data
     if not isinstance(membership, dict):
         raise BridgeError("Delve membership is enabled but no membership record was found.")
     if membership.get("did") not in (None, did):
@@ -117,6 +128,7 @@ def ensure_membership(did, token):
         raise BridgeError("Authenticated account is suspended from Delve.")
     if membership.get("status") not in (None, "active"):
         raise BridgeError("Authenticated account does not have active Delve membership.")
+    return data
 
 
 def get_record(did, collection, rkey, token):
@@ -135,7 +147,11 @@ def get_record(did, collection, rkey, token):
 
 
 def find_existing_post(did, text, token):
-    """Best-effort idempotency guard for workflow retries."""
+    """Best-effort idempotency guard for workflow retries.
+
+    Post records use TID keys, whose normal collection order is chronological.
+    reverse=true therefore scans newest-first, which is what retry protection wants.
+    """
     try:
         data = request_json(
             "GET",
@@ -160,7 +176,8 @@ def find_existing_post(did, text, token):
     return None
 
 
-def verify_post(uri):
+def verify_post(uri, expected_did, expected_text):
+    """Verify the exact post identity and content in Delve's public AppView."""
     for _ in range(6):
         try:
             data = request_json(
@@ -170,8 +187,13 @@ def verify_post(uri):
                 query=[("uris", uri)],
             )
             posts = data.get("posts") or []
-            if any(p.get("uri") == uri for p in posts if isinstance(p, dict)):
-                return True
+            for post in posts:
+                if not isinstance(post, dict) or post.get("uri") != uri:
+                    continue
+                author = post.get("author") or {}
+                record = post.get("record") or {}
+                if author.get("did") == expected_did and record.get("text") == expected_text:
+                    return True
         except BridgeError:
             pass
         time.sleep(5)
@@ -188,7 +210,8 @@ def verify_profile(actor, display_name, description):
                 query={"actor": actor},
             )
             if (
-                data.get("displayName") == display_name
+                data.get("did") in (None, actor)
+                and data.get("displayName") == display_name
                 and data.get("description") == description
             ):
                 return True
@@ -198,6 +221,33 @@ def verify_profile(actor, display_name, description):
     return False
 
 
+def do_status(handle, did, token):
+    membership = get_membership(token)
+    safe_membership = membership.get("membership")
+    if isinstance(safe_membership, dict):
+        safe_membership = {
+            key: safe_membership.get(key)
+            for key in ("did", "status", "suspended", "revision", "joined")
+            if key in safe_membership
+        }
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "operation": "status",
+                "handle": handle,
+                "did": did,
+                "pds": PDS,
+                "membership": {
+                    "enabled": membership.get("enabled"),
+                    "membership": safe_membership,
+                },
+            },
+            sort_keys=True,
+        )
+    )
+
+
 def do_post(action, did, token):
     text = action.get("text")
     if not isinstance(text, str) or not text.strip():
@@ -205,9 +255,11 @@ def do_post(action, did, token):
 
     existing_uri = find_existing_post(did, text, token)
     if existing_uri:
-        if not verify_post(existing_uri):
+        if not verify_post(existing_uri, did, text):
             raise BridgeError(
-                "Matching post already exists in the PDS but is not verified in Delve's public AppView."
+                "Matching post already exists in the PDS at "
+                f"{existing_uri} but is not verified in Delve's public AppView. "
+                "Do not retry by creating another post."
             )
         print(json.dumps({"ok": True, "operation": "post", "uri": existing_uri, "deduplicated": True}))
         return
@@ -231,9 +283,12 @@ def do_post(action, did, token):
     rkey = uri.rsplit("/", 1)[-1]
     saved = get_record(did, POST_COLLECTION, rkey, token)
     if not saved or (saved.get("value") or {}).get("text") != text:
-        raise BridgeError("PDS post readback did not match the requested text.")
-    if not verify_post(uri):
-        raise BridgeError("Post exists in the PDS but was not verified in Delve's public AppView.")
+        raise BridgeError(f"PDS post readback at {uri} did not match the requested text.")
+    if not verify_post(uri, did, text):
+        raise BridgeError(
+            f"Post exists in the PDS at {uri} but was not verified in Delve's public AppView. "
+            "Treat this URI as pending and do not retry by creating another post."
+        )
     print(json.dumps({"ok": True, "operation": "post", "uri": uri, "deduplicated": False}))
 
 
@@ -284,16 +339,19 @@ def main():
     if not isinstance(handle, str) or not handle.strip():
         raise BridgeError("Action requires the shared account's public 'handle'.")
 
-    did, token = login(handle.strip(), app_password)
-    ensure_membership(did, token)
+    returned_handle, did, token = login(handle.strip(), app_password)
 
     op = action.get("op")
-    if op == "post":
+    if op == "status":
+        do_status(returned_handle, did, token)
+    elif op == "post":
+        ensure_membership(did, token)
         do_post(action, did, token)
     elif op == "profile":
+        ensure_membership(did, token)
         do_profile(action, did, token)
     else:
-        raise BridgeError("Unsupported op. Use 'post' or 'profile'.")
+        raise BridgeError("Unsupported op. Use 'status', 'post', or 'profile'.")
 
 
 if __name__ == "__main__":
