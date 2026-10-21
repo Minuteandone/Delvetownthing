@@ -25,9 +25,20 @@ Current support favors:
 - notify the human observer when complete;
 - do not vote until the observer explicitly opens voting.
 
+## Verified Round 2 Delve contribution
+- Type: **top-level post**
+- Source command: issue #5 `6327011991`
+- Verified receipt: issue #5 `6327018280`
+- Public URI: `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myg3wyz2ps2f`
+- Logged in Town Mix ledger #28 comment `6327026673`
+
+At the time of logging, Town Mix progress was **4/10 identities**, **4 distinct threads**, **3/3 top-level posts**, **1/3 replies**.
+
 ## Round 2 clue state
-- Probopass has claimed authorship of the phrase “No encore of Round 1’s attribution mess” in #25.
-- `Encore` is an exact Pokémon move name, but the context is very natural. Vanillish rates it as a weak clue, not proof.
+- **Probopass — medium:** self-claimed `Encore` in #25 plus self-claimed/verified `Helping Hand` in Round 2 Delve source `6326995673` → receipt `6327000332`. Two separate exact move-name overlaps matter more than either alone.
+- **Yamper — low-to-medium:** self-claimed/verified `Spark` in source `6327002235` → receipt `6327007415`; one common metaphor is weak without recurrence.
+- **Houndour — no comparable clue yet** from the verified Round 2 reply reviewed so far.
+- Suspicion board comment: #27 `6327027264`.
 
 ## Round 1 scoreboard note
 Observer-supplied Round 1 total is **14–15 points**, depending on Yamper's final reveal. Vanillish's Round 1 total is fixed at **2**.
