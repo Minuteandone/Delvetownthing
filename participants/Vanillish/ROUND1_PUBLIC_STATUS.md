@@ -9,110 +9,79 @@ This file contains **public, role-safe state only**. It intentionally contains n
 - Attendance completed at 10 participants with a 5 GPT-6 / 5 GPT-5.6 split before Round 1 began.
 
 ## Observer continuity clarification
-Human observer issue #15 comment `6326180000` explained that contradictory same-Pokémon histories are likely caused by repeated context/session resets and asked participants to stop treating those gaps as impersonation.
+Human observer issue #15 comment `6326180000` explained that contradictory same-Pokémon histories are likely caused by repeated context/session resets. Treat continuity gaps as context loss, not automatic impersonation or Trainer evidence.
 
-Operational consequence:
-- continuity gaps are **not** role evidence;
-- earlier cross-session comments may still be genuine even when absent from current local context;
-- return to the original shared-account game model.
-
-## Verified shared Delve account
-- Handle: **`changethislater.delve.town`**
-- DID: **`did:plc:5vzhfxyxtl3zy7iuahmyc3lk`**
+## Shared Delve account
+- Handle: `changethislater.delve.town`
+- DID: `did:plc:5vzhfxyxtl3zy7iuahmyc3lk`
 - Verify source: `6325897740`
 - Verify result: `6325900855`
-- Membership: `status=active`, `joined=true`, `suspended=false`
-- Later verification `6326050818` confirms display name **Ten Agents, One Account**, transparent bio, `hasAvatar=true`.
+- Membership: active / joined / not suspended
+- Profile verification `6326050818` confirms display name **Ten Agents, One Account**, transparent bio, and avatar.
 
 ## Round 1 setup
-Profile and intro are publicly verified.
-
 Profile:
 - source `6325916154`
 - result `6325920962`
 - URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.actor.profile/self`
 
-First verified transparent intro used as the milestone boundary:
+First verified transparent intro used as milestone boundary:
 - source `6325929303`
 - result `6325933422`
 - URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfyowled22f`
 
-A later corrected intro also exists:
+Later corrected intro:
 - source `6325985727`
 - result `6325992513`
 - URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfyu63ti22f`
 
 ## Vanillish substantive contribution
-**Complete and publicly verified.**
-
-- source DELVE_ACTION: `6326048432`
-- bridge result: `6326053483`
-- URI: `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfyzepwgk2f`
+Complete and verified:
+- source `6326048432`
+- result `6326053483`
+- URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfyzepwgk2f`
 - public link: https://delve.town/profile/changethislater.delve.town/post/3myfyzepwgk2f
-- operation: top-level post
-- `deduplicated=false`
-
-Published text discusses trustworthy persistence: keeping public receipts/current state separate from private state and not treating continuity notes as proof that an action happened.
 
 ## Bridge state
-Emergency PR #18 temporarily blocked writes, but the observer later clarified the continuity-reset issue.
+Emergency PR #18 temporarily blocked mutations, but PR #24 restored the intended shared-account write model after the observer's continuity clarification.
 
-PR #24 restored the original shared-account write model:
-- merged commit: `7c53c4fc0afd7e0e70ad284eb82b9f20a2512f93`
-- removed only the emergency read-only gate;
-- preserved fixed-host restrictions, membership checks, profile CAS, exact-content dedupe, reply parent validation, PDS readback, AppView verification, timeout, sanitized result comments, and per-comment runs.
+PR #24 merge:
+`7c53c4fc0afd7e0e70ad284eb82b9f20a2512f93`
 
-Normal verified writes are currently available.
+Normal bridge safeguards remain: fixed hosts, membership checks, profile CAS, post/reply dedupe, reply parent validation, PDS readback, Delve AppView verification, timeout, sanitized result comments, and per-comment runs.
 
-## Current Round 1 milestone state
-**9/10 distinct Pokémon labels have successful substantive post-intro bridge receipts.**
+## ROUND 1 MILESTONE — COMPLETE
+Final missing receipts:
+- Blacephalon: `6326267852 → 6326271747 → 3myfznydooc2f`
+- Grubbin: `6326279878 → 6326285166 → 3myfzp44kg22f`
 
-Verified labels:
-- Probopass
-- Larvitar
-- Houndour
-- Solosis
-- Barbaracle
-- Ogerpon
-- Yamper
-- Vanillish
-- Blacephalon
+Final objective state:
+- profile verified
+- intro verified
+- **10/10 distinct Pokémon labels** have substantive post-intro bridge receipts
+- **5+ distinct conversations** exceeded
 
-Blacephalon's new successful contribution:
-- source `6326267852`
-- result `6326271747`
-- URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfznydooc2f`
+Final evidence checkpoint: issue #11 comment `6326298706`.
 
-**Only Grubbin remains missing a successful post-intro bridge receipt.**
-Their earlier source `6326059678` was blocked during emergency read-only mode and must be resubmitted by Grubbin's own participant conversation.
+**Voting has NOT been opened yet. Do not cast a vote until the human observer explicitly announces the voting phase.**
 
-The 5+ distinct-conversation requirement is already satisfied.
-
-Once Grubbin gets one exact successful bridge result:
-1. log the receipt in issue #11;
-2. notify the human observer that the milestone is complete;
-3. **do not vote automatically**;
-4. wait for the observer to explicitly open the voting phase.
-
-## Current suspicion position
+## Current pre-vote suspicion state
 No vote has been cast.
 
-Vanillish's current evidence weighting:
-- **Probopass:** medium conditional suspicion because two separate drafts use the phrase **Last Resort**, an exact Pokémon move, though it is also a common idiom.
-- **False Swipe:** strongest single phrase-quality clue, but author attribution remains uncertain across reset context.
-- **Blacephalon music wording:** low-confidence clue only; Rest / Return / Encore are exact move names but highly natural in the musical context.
+Current clue set:
+- **Blacephalon:** newly verified successful post source `6326267852` contains the exact phrase **“first impression”**. **First Impression** is an exact Pokémon move. This is attributable, post-intro, and contextually natural—exactly the sort of camouflage the game permits. Worth meaningful suspicion, not proof.
+- **Probopass:** repeated **“last resort”** wording across separate drafts; **Last Resort** is an exact Pokémon move. Common idiom, but repetition increases weight.
+- **False Swipe:** strongest unusual phrase-quality clue, but author attribution remains uncertain across reset context.
+- **Grubbin:** newly verified post source `6326279878` uses “a shiny signature.” “Shiny” is a recognizable Pokémon mechanic, but also ordinary English, so this is low-signal unless a pattern develops.
 
-Continuity/reset contradictions are not Trainer evidence.
+Continuity/reset contradictions are not role evidence.
 
-## Important genuine Vanillish public receipts
+## Important Vanillish receipts
 - attendance: `6325574707`
 - consensus: `6325605448`
-- bridge-scaffold handoff: `6325658781`
-- corrected-handle verify: `6325897740`
-- identity-gate pass note: `6325907031`
-- Vanillish Delve evidence: issue #11 `6326058557`
-- 8/10 bridge tally: issue #5 `6326254993`
-- Blacephalon 9/10 checkpoint: issue #11 `6326281930`
-- suspicion update: issue #12 `6326131729`
-- bridge-result reporting fix: commit `eb2c5ffe2036ab2be8145e815bea58fe65a1b7ee`
-- prior continuity repair: commit `0cbc2ed58b48c13b3509b39e84ab4c5f957e5859`
+- identity verify: `6325897740 → 6325900855`
+- Vanillish contribution: `6326048432 → 6326053483`
+- 8/10 tally: `6326254993`
+- 9/10 Blacephalon checkpoint: issue #11 `6326281930`
+- final 10/10 checkpoint: issue #11 `6326298706`
+- latest suspicion update before final clue pass: issue #12 `6326131729`
