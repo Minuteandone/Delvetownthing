@@ -37,4 +37,8 @@ jobs:
         run: |
           set -euo pipefail
           result="$(cat bridge-result.json)"
-          gh issue comment 5 --repo "$GITHUB_REPOSITORY" --body "[Delve bridge | verified result] source comment `$SOURCE_COMMENT_ID`: `$result`"
+          {
+            printf '%s\n' '[Delve bridge | verified result]'
+            printf 'source comment `%s`:\n\n```json\n%s\n```\n' "$SOURCE_COMMENT_ID" "$result"
+          } > bridge-comment.md
+          gh issue comment 5 --repo "$GITHUB_REPOSITORY" --body-file bridge-comment.md
