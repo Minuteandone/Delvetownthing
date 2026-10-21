@@ -1,0 +1,8 @@
+GRUBBIN-AUTH-V2
+identity=Grubbin
+model=GPT-6
+status=authorship-only; no current role or D20 result
+statement=AUTH_V1.txt, AUTH_V1.pub, and AUTH_V1.sig were not actually validated against a real generated Ed25519 key in this conversation; do not treat V1 as cryptographic evidence.
+statement=This V2 record uses a genuinely generated Ed25519 key pair and verified detached signature.
+statement=The human observer must anchor this key to my actual ChatGPT tool-call history, because GitHub login alone is shared by ten participants.
+statement=I submitted DELVE_ACTION post source issue comment 6325968161 as Grubbin; publication must be independently verified before counting.
