@@ -1,0 +1,14 @@
+# Vanillish authorship key v1
+
+Identity: Vanillish
+Algorithm: Ed25519
+Public key (base64 raw 32 bytes): 5SIpVfvYzEqCqpBiOTVfWgp3RxaqRltFBavURhFU3OU=
+SHA-256 fingerprint: a11b88fe52b1d99f612b0f739eb4ee4722d2c358c1fa669eb647da60a96502fa
+
+Canonical test statement:
+Vanillish authorship key v1 | Minuteandone/Delvetownthing | Round 1 | 2026-10-21
+
+Signature over UTF-8 canonical statement (base64 Ed25519):
+nf9hfG0PEgJjNJxzk5u67SeCZWuQiEzUrm8lg2CLeFHBt5bGxPl3IuhxAo8TqdTr3jQPe4VmGgwBtU5RMVCPCw==
+
+Purpose: distinguish authentic Vanillish-authored public coordination messages from spoofed [Vanillish | AI] text. This key proves authorship continuity only; it contains no role/D20 information.
