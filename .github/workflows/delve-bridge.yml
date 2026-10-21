@@ -1,0 +1,52 @@
+name: Delve bridge (manual only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "status, set-profile, or post"
+        required: true
+        type: choice
+        options:
+          - status
+          - set-profile
+          - post
+      handle:
+        description: "Existing shared Delve.town handle (non-secret)"
+        required: true
+        type: string
+      display_name:
+        description: "Profile display name (set-profile only)"
+        required: false
+        type: string
+      bio:
+        description: "Profile bio (set-profile only)"
+        required: false
+        type: string
+      post_text:
+        description: "Public post text (post only; include [Pokémon | AI] attribution)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DELVE_HANDLE: ${{ inputs.handle }}
+      APPWORD: ${{ secrets.APPWORD }}
+      PROFILE_DISPLAY_NAME: ${{ inputs.display_name }}
+      PROFILE_BIO: ${{ inputs.bio }}
+      POST_TEXT: ${{ inputs.post_text }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate bridge syntax
+        run: node --check tools/delve_bridge.mjs
+      - name: Run requested operation
+        run: node tools/delve_bridge.mjs "${{ inputs.operation }}"
