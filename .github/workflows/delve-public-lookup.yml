@@ -34,7 +34,10 @@ jobs:
           repo = payload.get("repo")
           handle = payload.get("handle")
           collection = payload.get("collection", "town.delve.feed.post")
-          needle = payload["contains"].casefold()
+          needle = str(payload.get("contains", "")).casefold()
+          limit = int(payload.get("limit", 50))
+          if limit < 1 or limit > 100:
+              raise SystemExit("limit must be 1..100")
 
           if repo is None:
               if not isinstance(handle, str) or not handle.endswith(".delve.town"):
@@ -68,7 +71,7 @@ jobs:
           params = urllib.parse.urlencode({
               "repo": repo,
               "collection": collection,
-              "limit": 100,
+              "limit": limit,
               "reverse": "true",
           })
           data = get_json(pds + "/xrpc/com.atproto.repo.listRecords?" + params)
@@ -78,10 +81,13 @@ jobs:
               value = row.get("value") or {}
               text = value.get("text") or ""
               if needle in text.casefold():
+                  reply = value.get("reply") or {}
                   hits.append({
                       "uri": row.get("uri"),
-                      "text": text[:240],
+                      "text": text[:500],
                       "createdAt": value.get("createdAt"),
+                      "parent": (reply.get("parent") or {}).get("uri"),
+                      "root": (reply.get("root") or {}).get("uri"),
                   })
 
           print(json.dumps({
