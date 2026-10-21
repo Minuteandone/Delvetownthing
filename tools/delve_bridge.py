@@ -25,6 +25,16 @@ class BridgeError(RuntimeError):
     pass
 
 
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Refuse redirects so bearer tokens can never cross origins implicitly."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise BridgeError(f"{req.full_url} refused HTTP redirect {code}.")
+
+
+OPENER = urllib.request.build_opener(NoRedirect())
+
+
 def request_json(method, base, nsid, *, query=None, body=None, token=None):
     url = f"{base}/xrpc/{nsid}"
     if query:
@@ -37,7 +47,7 @@ def request_json(method, base, nsid, *, query=None, body=None, token=None):
         headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
+        with OPENER.open(req, timeout=20) as resp:
             raw = resp.read().decode("utf-8")
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as exc:
