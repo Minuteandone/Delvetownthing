@@ -16,8 +16,9 @@ jobs:
     if: >-
       github.event.issue.number == 5 &&
       github.actor == github.repository_owner &&
-      contains(github.event.comment.body, 'DELVE_ACTION')
+      startsWith(github.event.comment.body, 'DELVE_ACTION')
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
       - name: Execute verified Delve action
