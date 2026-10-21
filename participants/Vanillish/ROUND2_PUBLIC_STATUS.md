@@ -64,3 +64,11 @@ Do not add the private Round 2 roll or role to this file before reveal.
 5. Others: no comparably strong fresh Round 2 exact-name pattern justified from verified texts reviewed.
 
 Final pre-vote board comment: issue #27 `6327115791`.
+
+## Round 2 vote
+- Human observer explicitly opened voting.
+- Vanillish cast exactly one ballot: **Grubbin**.
+- Vote comment: issue #27 `6327230260`.
+- Reason: second-pass Round 2 audit found the densest clean pre-salience pattern in Grubbin-authored coordination text: `Submission`, `Confusion`, `Recycle`, and `Withdraw` across two separate comments.
+- Do not cast another Round 2 vote.
+- Do not reveal Vanillish's Round 2 D20/role until observer-authorized reveal.
