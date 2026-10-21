@@ -16,6 +16,8 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
+from action_signature import SignatureError, verify_action_signature
+
 PDS = "https://pds.delve.town"
 APPVIEW = "https://api.delve.town"
 APPVIEW_SERVICE = "did:web:api.delve.town#bsky_appview"
@@ -468,6 +470,11 @@ def main():
         raise BridgeError("APPWORD is not available to this workflow.")
 
     action = parse_action(comment)
+    try:
+        verify_action_signature(action)
+    except SignatureError as exc:
+        raise BridgeError(str(exc)) from None
+
     handle = action.get("handle")
     if not isinstance(handle, str) or not handle.strip():
         raise BridgeError("Action requires the shared account's public 'handle'.")
