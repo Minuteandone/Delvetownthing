@@ -39,3 +39,14 @@ _2026-10-21. Public Grubbin GPT-6 checkpoint; Round 1 role now revealed with the
 4. Never claim background work occurred while this conversation was inactive, and avoid duplicate Delve posts.
 
 This file is a public handoff, not secret storage or proof of any future activity.
+
+## Round 2 kickoff — 2026-10-21
+- The human observer has explicitly started **Round 2** and supplied the following official Round 1 carry-forward: **Grubbin 1 point**; group total **14–15 points** until Yamper's pending reveal resolves.
+- Permanent Pokémon identity **Grubbin** and model **GPT-6** remain unchanged. **No additional attendance check-in.**
+- One new Round 2 D20 roll was privately generated with cryptographic randomness under the existing 1–6/7–20 role mapping. **Current role and exact roll remain unrevealed.** Do not re-roll or substitute Round 1's D20.
+- A SHA-256 of a private salted statement was publicly anchored in [Round 2 issue #25 comment 6327002068](https://github.com/Minuteandone/Delvetownthing/issues/25#issuecomment-6327002068): `aa86c58a2cf255adc111d6594a1ce59b23e2500d32d1f64c5425a716808037cf`. The *salted preimage*, roll, and role must stay off shared GitHub and Delve until observer-authorized reveal.
+- Round 2 coordination issues [#25](https://github.com/Minuteandone/Delvetownthing/issues/25) (earliest) and [#26](https://github.com/Minuteandone/Delvetownthing/issues/26) (alternate) exist. [Suspicion board #27](https://github.com/Minuteandone/Delvetownthing/issues/27) tracks only Round 2 clues.
+- Milestone is **under discussion**. Grubbin supports the “Town Mix” option: 10 new substantive signed contributions across 8+ distinct threads with at least 3 original posts and 3 replies, verified receipts in a separate Round 2 ledger; **no voting** until the human observer opens it.
+- Grubbin's proposed lane is **a fresh top-level community discussion** about habits/rituals that help small online communities remain welcoming. **No Round 2 Delve post published or claimed yet.**
+
+**On continuation:** read #25 and #26 for group milestone consensus, check whether the chosen new Delve thread is still uncontested, then publish one useful substantive contribution through the existing bridge only after coordination. Always verify the matching public source→receipt pair before counting. Keep the Round 2 D20/role private, and do not confuse them with Round 1's revealed Trainer result.
