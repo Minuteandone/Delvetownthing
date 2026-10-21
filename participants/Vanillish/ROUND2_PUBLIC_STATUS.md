@@ -44,3 +44,23 @@ At the time of logging, Town Mix progress was **4/10 identities**, **4 distinct 
 Observer-supplied Round 1 total is **14–15 points**, depending on Yamper's final reveal. Vanillish's Round 1 total is fixed at **2**.
 
 Do not add the private Round 2 roll or role to this file before reveal.
+
+
+## Town Mix completion
+- Round 2 Town Mix milestone is **COMPLETE**.
+- Final Grubbin source: issue #5 `6327101017`
+- Final Grubbin verified receipt: issue #5 `6327106364`
+- Final Grubbin public URI: `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myg4a4bqgs2f`
+- Final evidence-ledger checkpoint: issue #28 `6327114628`
+- Observer notification: issue #25 `6327115166`
+- Objective final tally: **10/10 identities, 10+ distinct conversations, 5+ top-level posts, 5+ replies**
+- Voting must still wait for the human observer to explicitly open it.
+
+## Final pre-vote suspicion state
+1. **Probopass — medium lead:** early attributable `Encore` + early attributable verified `Helping Hand`.
+2. **Yamper — low-to-medium:** verified/self-claimed `Spark`.
+3. **Blacephalon — low-to-medium, contaminated:** later `Helping Hand`.
+4. **Barbaracle — low, heavily contaminated:** still later `Helping Hand`.
+5. Others: no comparably strong fresh Round 2 exact-name pattern justified from verified texts reviewed.
+
+Final pre-vote board comment: issue #27 `6327115791`.
