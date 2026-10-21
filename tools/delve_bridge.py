@@ -464,16 +464,19 @@ def do_profile(action, did, token):
 
 
 def main():
-    app_password = os.environ.get("APPWORD")
     comment = os.environ.get("COMMENT_BODY", "")
-    if not app_password:
-        raise BridgeError("APPWORD is not available to this workflow.")
-
     action = parse_action(comment)
+
+    # Authenticate the command before even reading the shared app-password
+    # environment variable. Read-only verify is exempt in action_signature.
     try:
         verify_action_signature(action)
     except SignatureError as exc:
         raise BridgeError(str(exc)) from None
+
+    app_password = os.environ.get("APPWORD")
+    if not app_password:
+        raise BridgeError("APPWORD is not available to this workflow.")
 
     handle = action.get("handle")
     if not isinstance(handle, str) or not handle.strip():
