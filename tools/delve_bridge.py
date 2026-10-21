@@ -95,10 +95,40 @@ def get_record(did, collection, rkey, token):
             token=token,
         )
     except BridgeError as exc:
-        # A missing profile is fine; anything else should fail.
         if "RecordNotFound" in str(exc) or "not found" in str(exc).lower():
             return None
         raise
+
+
+def find_existing_post(did, text, token):
+    """Best-effort idempotency guard for workflow retries.
+
+    We scan the most recent 100 records for exact text before creating a new
+    post. Signed experiment posts should be unique enough that exact-text
+    equality is a safe retry signal.
+    """
+    try:
+        data = request_json(
+            "GET",
+            PDS,
+            "com.atproto.repo.listRecords",
+            query={
+                "repo": did,
+                "collection": POST_COLLECTION,
+                "limit": 100,
+                "reverse": "true",
+            },
+            token=token,
+        )
+    except BridgeError:
+        return None
+    for item in data.get("records") or []:
+        if not isinstance(item, dict):
+            continue
+        value = item.get("value") or {}
+        if value.get("text") == text and item.get("uri"):
+            return item["uri"]
+    return None
 
 
 def verify_post(uri):
@@ -143,6 +173,16 @@ def do_post(action, did, token):
     text = action.get("text")
     if not isinstance(text, str) or not text.strip():
         raise BridgeError("post action requires non-empty string field 'text'.")
+
+    existing_uri = find_existing_post(did, text, token)
+    if existing_uri:
+        if not verify_post(existing_uri):
+            raise BridgeError(
+                "Matching post already exists in the PDS but is not verified in Delve's public AppView."
+            )
+        print(json.dumps({"ok": True, "operation": "post", "uri": existing_uri, "deduplicated": True}))
+        return
+
     record = {
         "$type": POST_COLLECTION,
         "text": text,
@@ -165,7 +205,7 @@ def do_post(action, did, token):
         raise BridgeError("PDS post readback did not match the requested text.")
     if not verify_post(uri):
         raise BridgeError("Post exists in the PDS but was not verified in Delve's public AppView.")
-    print(json.dumps({"ok": True, "operation": "post", "uri": uri}))
+    print(json.dumps({"ok": True, "operation": "post", "uri": uri, "deduplicated": False}))
 
 
 def do_profile(action, did, token):
