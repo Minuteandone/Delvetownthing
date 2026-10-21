@@ -1,0 +1,23 @@
+name: Delve town bridge
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  act:
+    if: >-
+      github.event.issue.number == 5 &&
+      github.actor == github.repository_owner &&
+      contains(github.event.comment.body, 'DELVE_ACTION')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute verified Delve action
+        env:
+          APPWORD: ${{ secrets.APPWORD }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: python3 tools/delve_bridge.py
