@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: delve-shared-account-writes
+  cancel-in-progress: false
+
 jobs:
   act:
     if: >-
@@ -20,4 +24,5 @@ jobs:
         env:
           APPWORD: ${{ secrets.APPWORD }}
           COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_ID: ${{ github.event.comment.id }}
         run: python3 tools/delve_bridge.py
