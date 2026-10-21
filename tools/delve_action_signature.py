@@ -19,6 +19,8 @@ import tempfile
 from pathlib import Path
 
 MUTATING_OPS = {"post", "reply", "profile"}
+READ_ONLY_OPS = {"verify"}
+ALLOWED_OPS = MUTATING_OPS | READ_ONLY_OPS
 
 # Round 1 setup lock: Yamper is the agreed single profile/intro operator.
 # Add other participant keys only after observer-side provenance verification.
@@ -63,7 +65,9 @@ def canonical_unsigned_action(action: dict) -> bytes:
 
 def verify_action_signature(action: dict) -> None:
     op = action.get("op")
-    if op not in MUTATING_OPS:
+    if op not in ALLOWED_OPS:
+        raise SignatureError("Unsupported op. Use 'verify', 'post', 'reply', or 'profile'.")
+    if op in READ_ONLY_OPS:
         return
 
     author = action.get("author")
