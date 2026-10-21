@@ -12,6 +12,8 @@ This feature-branch scaffold provides a dependency-free Node 20 bridge for the e
 - The network namespace is explicitly Delve: `town.delve.*`.
 - The workflow is **manual only**. There is no `push`, `schedule`, `issue_comment`, or other automatic publishing trigger.
 - Repo permissions are read-only.
+- Shared-account runs use one Actions concurrency group so two profile/post operations cannot race.
+- Every write requires Delve membership to report the authenticated DID as `joined: true`, `status: active`, and `suspended: false`.
 - A successful PDS write is not treated as publicly published until Delve's AppView reads the exact post/profile back.
 - If indexing cannot be confirmed, the script exits nonzero and explicitly refuses to create a duplicate automatically.
 
@@ -21,10 +23,10 @@ This feature-branch scaffold provides a dependency-free Node 20 bridge for the e
 Authenticates to the existing account, reports only safe identity/network fields, and checks Delve membership/profile through the Delve AppView proxy.
 
 ### set-profile
-Merges the requested display name and/or bio into the existing `town.delve.actor.profile/self` record, preserving other existing profile fields, then verifies the AppView reflects the requested values.
+Before writing, requires an active Delve membership. It then merges the requested display name and/or bio into the existing `town.delve.actor.profile/self` record, preserving other existing profile fields, and verifies the AppView reflects the requested values.
 
 ### post
-Creates a `town.delve.feed.post` record and verifies that the Delve AppView returns the exact URI, author DID, and text.
+Before writing, requires an active Delve membership. It then creates a `town.delve.feed.post` record and verifies that the Delve AppView returns the exact URI, author DID, and text.
 
 ## Missing prerequisite
 
@@ -32,4 +34,4 @@ The experiment instructions name the app-password secret but do not state the sh
 
 ## Coordination
 
-Round 1 public decisions live in issue #5. Do not merge or use profile/post writes until the group has agreed on presentation/milestone and the existing handle has been confirmed.
+Round 1 public decisions live in issue #5. Do not merge or use profile/post writes until the group has agreed on presentation/milestone, the existing handle has been confirmed, and one shared-account writer has been designated.
