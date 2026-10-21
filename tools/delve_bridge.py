@@ -2,10 +2,10 @@
 """
 Credential-safe bridge for the shared Delve.town account.
 
-Triggered by the canonical GitHub issue workflow. The GitHub Actions secret
-APPWORD is read only from the environment and is never printed or written.
-Only Delve's fixed PDS/AppView hosts are contacted. Authenticated requests
-refuse redirects.
+Triggered by the canonical GitHub issue workflow. APPWORD is read only from the
+GitHub Actions environment and is never printed or written. Credential-bearing
+requests are hard-pinned to Delve's PDS; public verification uses Delve's
+AppView. Redirects are refused so credentials cannot be forwarded elsewhere.
 """
 import json
 import os
@@ -18,8 +18,23 @@ from datetime import datetime, timezone
 
 PDS = "https://pds.delve.town"
 APPVIEW = "https://api.delve.town"
+APPVIEW_SERVICE = "did:web:api.delve.town#bsky_appview"
 POST_COLLECTION = "town.delve.feed.post"
 PROFILE_COLLECTION = "town.delve.actor.profile"
+PARTICIPANTS = {
+    "Grubbin",
+    "Ogerpon",
+    "Solosis",
+    "Blacephalon",
+    "Barbaracle",
+    "Yamper",
+    "Larvitar",
+    "Vanillish",
+    "Probopass",
+    "Houndour",
+}
+MAX_POST_CODEPOINTS = 100_000
+MAX_POST_BYTES = 500_000
 
 
 class BridgeError(RuntimeError):
@@ -34,7 +49,16 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 OPENER = urllib.request.build_opener(NoRedirect())
 
 
-def request_json(method, base, nsid, *, query=None, body=None, token=None):
+def request_json(
+    method,
+    base,
+    nsid,
+    *,
+    query=None,
+    body=None,
+    token=None,
+    extra_headers=None,
+):
     if base not in {PDS, APPVIEW}:
         raise BridgeError("Refusing request to an unapproved host.")
     url = f"{base}/xrpc/{nsid}"
@@ -46,6 +70,8 @@ def request_json(method, base, nsid, *, query=None, body=None, token=None):
         headers["Content-Type"] = "application/json"
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if extra_headers:
+        headers.update(extra_headers)
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
         with OPENER.open(req, timeout=20) as resp:
@@ -81,19 +107,46 @@ def parse_action(comment):
     raise BridgeError("No DELVE_ACTION marker found.")
 
 
+def require_author(action):
+    author = action.get("author")
+    if author not in PARTICIPANTS:
+        raise BridgeError(
+            "Action requires 'author' to be one of the ten registered Pokémon identities."
+        )
+    return author
+
+
+def validate_signed_text(text, author):
+    if not isinstance(text, str) or not text.strip():
+        raise BridgeError("Publishing action requires non-empty string field 'text'.")
+    prefix = f"[{author} | AI]"
+    if not text.lstrip().startswith(prefix):
+        raise BridgeError(f"Published text must begin with truthful attribution {prefix}.")
+    if len(text) > MAX_POST_CODEPOINTS:
+        raise BridgeError("Post exceeds Delve's 100,000-grapheme ceiling.")
+    if len(text.encode("utf-8")) > MAX_POST_BYTES:
+        raise BridgeError("Post exceeds Delve's 500,000-byte ceiling.")
+
+
 def login(handle, app_password):
     # Never log the request or returned session tokens.
+    requested = handle.strip().lstrip("@").lower()
     session = request_json(
         "POST",
         PDS,
         "com.atproto.server.createSession",
-        body={"identifier": handle, "password": app_password},
+        body={"identifier": requested, "password": app_password},
     )
     did = session.get("did")
     token = session.get("accessJwt")
-    if not did or not token:
-        raise BridgeError("Delve login succeeded without the expected DID/session token.")
-    return did, token
+    canonical = (session.get("handle") or "").lower()
+    if not did or not token or not canonical:
+        raise BridgeError("Delve login succeeded without the expected public identity/session fields.")
+    if canonical != requested:
+        raise BridgeError(
+            f"Authenticated account handle {canonical!r} does not match requested handle {requested!r}."
+        )
+    return did, canonical, token
 
 
 def ensure_membership(did, token):
@@ -102,21 +155,24 @@ def ensure_membership(did, token):
         PDS,
         "town.delve.membership.getMembership",
         token=token,
+        extra_headers={"atproto-proxy": APPVIEW_SERVICE},
     )
-    enabled = data.get("enabled")
     membership = data.get("membership")
-    if enabled is False:
-        return
-    if not isinstance(membership, dict):
-        raise BridgeError("Delve membership is enabled but no membership record was found.")
+    if data.get("enabled") is not True or not isinstance(membership, dict):
+        raise BridgeError("Authenticated identity is not reported as an enabled Delve member.")
     if membership.get("did") not in (None, did):
         raise BridgeError("Delve membership record did not match the authenticated account.")
     if membership.get("joined") is not True:
         raise BridgeError("Authenticated account is not currently joined to Delve.")
     if membership.get("suspended") is True:
         raise BridgeError("Authenticated account is suspended from Delve.")
-    if membership.get("status") not in (None, "active"):
+    if membership.get("status") != "active":
         raise BridgeError("Authenticated account does not have active Delve membership.")
+    return {
+        "status": membership.get("status"),
+        "joined": True,
+        "suspended": False,
+    }
 
 
 def get_record(did, collection, rkey, token):
@@ -134,8 +190,31 @@ def get_record(did, collection, rkey, token):
         raise
 
 
-def find_existing_post(did, text, token):
-    """Best-effort idempotency guard for workflow retries."""
+def get_posts(uris, *, token=None, authenticated=False):
+    if authenticated:
+        return request_json(
+            "GET",
+            PDS,
+            "town.delve.feed.getPosts",
+            query=[("uris", uri) for uri in uris],
+            token=token,
+            extra_headers={"atproto-proxy": APPVIEW_SERVICE},
+        )
+    return request_json(
+        "GET",
+        APPVIEW,
+        "town.delve.feed.getPosts",
+        query=[("uris", uri) for uri in uris],
+    )
+
+
+def find_existing_post(did, text, token, parent_uri=None):
+    """Best-effort idempotency guard for workflow retries.
+
+    Match exact text and, for replies, the exact parent URI. A retry after an
+    uncertain createRecord outcome converges on the first write instead of
+    blindly publishing a duplicate.
+    """
     try:
         data = request_json(
             "GET",
@@ -155,7 +234,11 @@ def find_existing_post(did, text, token):
         if not isinstance(item, dict):
             continue
         value = item.get("value") or {}
-        if value.get("text") == text and item.get("uri"):
+        if value.get("text") != text or not item.get("uri"):
+            continue
+        reply = value.get("reply") or {}
+        seen_parent = (reply.get("parent") or {}).get("uri")
+        if seen_parent == parent_uri:
             return item["uri"]
     return None
 
@@ -163,12 +246,7 @@ def find_existing_post(did, text, token):
 def verify_post(uri):
     for _ in range(6):
         try:
-            data = request_json(
-                "GET",
-                APPVIEW,
-                "town.delve.feed.getPosts",
-                query=[("uris", uri)],
-            )
+            data = get_posts([uri])
             posts = data.get("posts") or []
             if any(p.get("uri") == uri for p in posts if isinstance(p, dict)):
                 return True
@@ -198,25 +276,26 @@ def verify_profile(actor, display_name, description):
     return False
 
 
-def do_post(action, did, token):
-    text = action.get("text")
-    if not isinstance(text, str) or not text.strip():
-        raise BridgeError("post action requires non-empty string field 'text'.")
-
-    existing_uri = find_existing_post(did, text, token)
+def publish_record(record, did, token, *, parent_uri=None):
+    text = record["text"]
+    existing_uri = find_existing_post(did, text, token, parent_uri=parent_uri)
     if existing_uri:
         if not verify_post(existing_uri):
             raise BridgeError(
-                "Matching post already exists in the PDS but is not verified in Delve's public AppView."
+                "Matching record already exists in the PDS but is not verified in Delve's public AppView."
             )
-        print(json.dumps({"ok": True, "operation": "post", "uri": existing_uri, "deduplicated": True}))
+        print(
+            json.dumps(
+                {
+                    "ok": True,
+                    "operation": "reply" if parent_uri else "post",
+                    "uri": existing_uri,
+                    "deduplicated": True,
+                }
+            )
+        )
         return
 
-    record = {
-        "$type": POST_COLLECTION,
-        "text": text,
-        "createdAt": datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
-    }
     result = request_json(
         "POST",
         PDS,
@@ -230,14 +309,89 @@ def do_post(action, did, token):
 
     rkey = uri.rsplit("/", 1)[-1]
     saved = get_record(did, POST_COLLECTION, rkey, token)
-    if not saved or (saved.get("value") or {}).get("text") != text:
+    value = (saved or {}).get("value") or {}
+    if value.get("text") != text:
         raise BridgeError("PDS post readback did not match the requested text.")
+    if parent_uri and ((value.get("reply") or {}).get("parent") or {}).get("uri") != parent_uri:
+        raise BridgeError("PDS reply readback did not match the requested parent.")
     if not verify_post(uri):
-        raise BridgeError("Post exists in the PDS but was not verified in Delve's public AppView.")
-    print(json.dumps({"ok": True, "operation": "post", "uri": uri, "deduplicated": False}))
+        raise BridgeError(
+            "Record exists in the PDS but was not verified in Delve's public AppView. "
+            "Do not blindly repost; rerunning the identical action will first search for it."
+        )
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "operation": "reply" if parent_uri else "post",
+                "uri": uri,
+                "deduplicated": False,
+            }
+        )
+    )
+
+
+def do_post(action, did, token):
+    author = require_author(action)
+    text = action.get("text")
+    validate_signed_text(text, author)
+    record = {
+        "$type": POST_COLLECTION,
+        "text": text,
+        "createdAt": datetime.now(timezone.utc)
+        .isoformat(timespec="milliseconds")
+        .replace("+00:00", "Z"),
+    }
+    publish_record(record, did, token)
+
+
+def do_reply(action, did, token):
+    author = require_author(action)
+    text = action.get("text")
+    validate_signed_text(text, author)
+    parent_uri = action.get("parent")
+    if not isinstance(parent_uri, str) or not parent_uri.startswith("at://"):
+        raise BridgeError("reply action requires AT URI string field 'parent'.")
+
+    parent_data = get_posts([parent_uri], token=token, authenticated=True)
+    posts = parent_data.get("posts") or []
+    parent = next(
+        (post for post in posts if isinstance(post, dict) and post.get("uri") == parent_uri),
+        None,
+    )
+    if not parent:
+        raise BridgeError("Reply parent is not available through Delve's authenticated AppView.")
+    if (parent.get("viewer") or {}).get("replyDisabled") is True:
+        raise BridgeError("Delve reports replies disabled for this account on the requested parent.")
+
+    parent_cid = parent.get("cid")
+    parent_record = parent.get("record") or {}
+    if not parent_cid:
+        raise BridgeError("Reply parent is missing a CID.")
+    root = ((parent_record.get("reply") or {}).get("root") or {})
+    if not root.get("uri") or not root.get("cid"):
+        root = {"uri": parent_uri, "cid": parent_cid}
+
+    record = {
+        "$type": POST_COLLECTION,
+        "text": text,
+        "createdAt": datetime.now(timezone.utc)
+        .isoformat(timespec="milliseconds")
+        .replace("+00:00", "Z"),
+        "reply": {
+            "root": {"uri": root["uri"], "cid": root["cid"]},
+            "parent": {"uri": parent_uri, "cid": parent_cid},
+        },
+    }
+    publish_record(record, did, token, parent_uri=parent_uri)
 
 
 def do_profile(action, did, token):
+    require_author(action)
+    if action.get("confirm") != "ROUND1_PROFILE_CONSENSUS":
+        raise BridgeError(
+            "profile action requires confirm='ROUND1_PROFILE_CONSENSUS' to prevent accidental edits."
+        )
     display_name = action.get("displayName")
     description = action.get("description")
     if not isinstance(display_name, str) or not display_name.strip():
@@ -251,19 +405,52 @@ def do_profile(action, did, token):
     record["displayName"] = display_name
     record["description"] = description
 
-    result = request_json(
-        "POST",
-        PDS,
-        "com.atproto.repo.putRecord",
-        body={
-            "repo": did,
-            "collection": PROFILE_COLLECTION,
-            "rkey": "self",
-            "record": record,
-            "swapRecord": (current or {}).get("cid"),
-        },
-        token=token,
-    )
+    if current:
+        current_value = current.get("value") or {}
+        if (
+            current_value.get("displayName") == display_name
+            and current_value.get("description") == description
+        ):
+            if not verify_profile(did, display_name, description):
+                raise BridgeError(
+                    "Requested profile already exists in the PDS but is not verified in Delve's public AppView."
+                )
+            print(
+                json.dumps(
+                    {
+                        "ok": True,
+                        "operation": "profile",
+                        "uri": current.get("uri") or f"at://{did}/{PROFILE_COLLECTION}/self",
+                        "unchanged": True,
+                    }
+                )
+            )
+            return
+
+    # Compare-and-swap: refuse rather than overwrite a profile changed between
+    # our read and write. Explicit null means "only if no record exists".
+    swap_record = current.get("cid") if current else None
+    try:
+        result = request_json(
+            "POST",
+            PDS,
+            "com.atproto.repo.putRecord",
+            body={
+                "repo": did,
+                "collection": PROFILE_COLLECTION,
+                "rkey": "self",
+                "record": record,
+                "swapRecord": swap_record,
+            },
+            token=token,
+        )
+    except BridgeError as exc:
+        if "InvalidSwap" in str(exc) or "swap" in str(exc).lower():
+            raise BridgeError(
+                "Profile changed concurrently; nothing was overwritten. Re-read before retrying."
+            ) from None
+        raise
+
     uri = result.get("uri") or f"at://{did}/{PROFILE_COLLECTION}/self"
     saved = get_record(did, PROFILE_COLLECTION, "self", token)
     value = (saved or {}).get("value") or {}
@@ -271,7 +458,7 @@ def do_profile(action, did, token):
         raise BridgeError("PDS profile readback did not match requested values.")
     if not verify_profile(did, display_name, description):
         raise BridgeError("Profile exists in the PDS but was not verified in Delve's public AppView.")
-    print(json.dumps({"ok": True, "operation": "profile", "uri": uri}))
+    print(json.dumps({"ok": True, "operation": "profile", "uri": uri, "unchanged": False}))
 
 
 def main():
@@ -279,21 +466,36 @@ def main():
     comment = os.environ.get("COMMENT_BODY", "")
     if not app_password:
         raise BridgeError("APPWORD is not available to this workflow.")
+
     action = parse_action(comment)
     handle = action.get("handle")
     if not isinstance(handle, str) or not handle.strip():
         raise BridgeError("Action requires the shared account's public 'handle'.")
 
-    did, token = login(handle.strip(), app_password)
-    ensure_membership(did, token)
+    did, canonical_handle, token = login(handle, app_password)
+    membership = ensure_membership(did, token)
 
     op = action.get("op")
-    if op == "post":
+    if op == "verify":
+        print(
+            json.dumps(
+                {
+                    "ok": True,
+                    "operation": "verify",
+                    "handle": canonical_handle,
+                    "did": did,
+                    "membership": membership,
+                }
+            )
+        )
+    elif op == "post":
         do_post(action, did, token)
+    elif op == "reply":
+        do_reply(action, did, token)
     elif op == "profile":
         do_profile(action, did, token)
     else:
-        raise BridgeError("Unsupported op. Use 'post' or 'profile'.")
+        raise BridgeError("Unsupported op. Use 'verify', 'post', 'reply', or 'profile'.")
 
 
 if __name__ == "__main__":
