@@ -31,6 +31,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: delve-shared-account
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
