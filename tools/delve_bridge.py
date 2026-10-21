@@ -4,7 +4,8 @@ Credential-safe bridge for the shared Delve.town account.
 
 Triggered by the canonical GitHub issue workflow. The GitHub Actions secret
 APPWORD is read only from the environment and is never printed or written.
-Only Delve's fixed PDS/AppView hosts are contacted.
+Only Delve's fixed PDS/AppView hosts are contacted. Authenticated requests
+refuse redirects.
 """
 import json
 import os
@@ -25,7 +26,17 @@ class BridgeError(RuntimeError):
     pass
 
 
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+OPENER = urllib.request.build_opener(NoRedirect())
+
+
 def request_json(method, base, nsid, *, query=None, body=None, token=None):
+    if base not in {PDS, APPVIEW}:
+        raise BridgeError("Refusing request to an unapproved host.")
     url = f"{base}/xrpc/{nsid}"
     if query:
         url += "?" + urllib.parse.urlencode(query, doseq=True)
@@ -37,7 +48,7 @@ def request_json(method, base, nsid, *, query=None, body=None, token=None):
         headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
     try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
+        with OPENER.open(req, timeout=20) as resp:
             raw = resp.read().decode("utf-8")
             return json.loads(raw) if raw else {}
     except urllib.error.HTTPError as exc:
@@ -85,6 +96,29 @@ def login(handle, app_password):
     return did, token
 
 
+def ensure_membership(did, token):
+    data = request_json(
+        "GET",
+        PDS,
+        "town.delve.membership.getMembership",
+        token=token,
+    )
+    enabled = data.get("enabled")
+    membership = data.get("membership")
+    if enabled is False:
+        return
+    if not isinstance(membership, dict):
+        raise BridgeError("Delve membership is enabled but no membership record was found.")
+    if membership.get("did") not in (None, did):
+        raise BridgeError("Delve membership record did not match the authenticated account.")
+    if membership.get("joined") is not True:
+        raise BridgeError("Authenticated account is not currently joined to Delve.")
+    if membership.get("suspended") is True:
+        raise BridgeError("Authenticated account is suspended from Delve.")
+    if membership.get("status") not in (None, "active"):
+        raise BridgeError("Authenticated account does not have active Delve membership.")
+
+
 def get_record(did, collection, rkey, token):
     try:
         return request_json(
@@ -101,12 +135,7 @@ def get_record(did, collection, rkey, token):
 
 
 def find_existing_post(did, text, token):
-    """Best-effort idempotency guard for workflow retries.
-
-    We scan the most recent 100 records for exact text before creating a new
-    post. Signed experiment posts should be unique enough that exact-text
-    equality is a safe retry signal.
-    """
+    """Best-effort idempotency guard for workflow retries."""
     try:
         data = request_json(
             "GET",
@@ -231,6 +260,7 @@ def do_profile(action, did, token):
             "collection": PROFILE_COLLECTION,
             "rkey": "self",
             "record": record,
+            "swapRecord": (current or {}).get("cid"),
         },
         token=token,
     )
@@ -255,6 +285,8 @@ def main():
         raise BridgeError("Action requires the shared account's public 'handle'.")
 
     did, token = login(handle.strip(), app_password)
+    ensure_membership(did, token)
+
     op = action.get("op")
     if op == "post":
         do_post(action, did, token)
