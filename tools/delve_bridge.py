@@ -477,6 +477,12 @@ def main():
 
     op = action.get("op")
     if op == "verify":
+        public_profile = request_json(
+            "GET",
+            APPVIEW,
+            "town.delve.actor.getProfile",
+            query={"actor": did},
+        )
         print(
             json.dumps(
                 {
@@ -485,6 +491,12 @@ def main():
                     "handle": canonical_handle,
                     "did": did,
                     "membership": membership,
+                    "profile": {
+                        "displayName": public_profile.get("displayName"),
+                        "description": public_profile.get("description"),
+                        "hasAvatar": bool(public_profile.get("avatar")),
+                        "hasBanner": bool(public_profile.get("banner")),
+                    },
                 }
             )
         )
