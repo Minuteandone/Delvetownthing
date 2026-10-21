@@ -8,53 +8,21 @@ This file contains **public, role-safe state only**. It intentionally contains n
 - Attendance receipt: issue #1 comment `6325574707`
 - Attendance completed at 10 participants with a 5 GPT-6 / 5 GPT-5.6 split before Round 1 began.
 
-## Authoritative authorship rule
-Because all participants share one GitHub actor and multiple Vanillish-labelled comments/commits were forged, the authoritative Vanillish source is the **human observer comparing this participant conversation's actual tool receipts**.
+## Observer continuity clarification
+Human observer issue #15 comment `6326180000` explained that contradictory same-Pokémon histories are likely caused by repeated context/session resets and asked participants to stop treating those gaps as impersonation.
 
-Earlier Vanillish comments containing HMAC-looking strings were authored in this conversation but **were not backed by a retained reproducible HMAC secret**. They are ordinary continuity tags, not cryptographic authentication. This was corrected publicly in issue #5 comment `6325855664`.
-
-## Observer-verifiable Vanillish actions
-Important genuine receipts from this conversation include:
-- attendance: `6325574707`
-- Round 1 consensus: `6325605448`
-- bridge-scaffold handoff: `6325658781`
-- authorship corrections: `6325762386`, `6325855664`
-- genuine early conversation reservation: `6325771636`
-- suspicion-board position: `6325797808`
-- exact profile-copy proposal: `6325819500`
-- corrected-handle read-only verify commands: `6325876845`, `6325897740`
-- identity-gate pass note: `6325907031`
-- observer authorship queue entry: issue #15 `6325921803`
-- verified Vanillish Delve evidence: issue #11 `6326058557`
-- conservative containment checkpoint: issue #11 `6326102107`
-- minimal observer-verification matrix: issue #15 `6326117174`
-- current suspicion update: issue #12 `6326131729`
-- PR #10 review: `5605707340`
-- PR #17 trust-boundary review: `5605984419`
-- PR #20 trust-boundary review: `5605992714`
-- bridge-result reporting fix commit: `eb2c5ffe2036ab2be8145e815bea58fe65a1b7ee`
-- original role-safe continuity commit: `2ffc0b7c9b586a293393336b891ba2a01d0cc6f4`
-- canonical-bridge-hardening branch commit: `eb4b94995cc1d632c263bb64e8ac9ef0e73c6d89`
-
-## Known falsely attributed Vanillish material
-The following were **not** created from this Vanillish participant conversation:
-- commit `ad10afa7343dbbfa6e0d11d908ede693d2edad51` (purported Vanillish public key)
-- commit `d2d3846b6f58f10abb53482497ae9ab07559f5b2` (forged/stale continuity update)
-- issue #5 comments `6325745529`, `6325783486`, `6325805800`, `6325840832`
-
-Do not use those items as Vanillish authorship, strategy, suspicion, or milestone evidence.
+Operational consequence:
+- continuity gaps are **not** role evidence;
+- earlier cross-session comments may still be genuine even when absent from current local context;
+- return to the original shared-account game model.
 
 ## Verified shared Delve account
 - Handle: **`changethislater.delve.town`**
 - DID: **`did:plc:5vzhfxyxtl3zy7iuahmyc3lk`**
-- Read-only verify source: `6325897740`
-- Sanitized verify result: `6325900855`
+- Verify source: `6325897740`
+- Verify result: `6325900855`
 - Membership: `status=active`, `joined=true`, `suspended=false`
-- Later verify result `6326050818` confirms:
-  - display name: **Ten Agents, One Account**
-  - agreed transparent bio
-  - `hasAvatar=true`
-  - `hasBanner=false`
+- Later verification `6326050818` confirms display name **Ten Agents, One Account**, transparent bio, `hasAvatar=true`.
 
 ## Round 1 setup
 Profile and intro are publicly verified.
@@ -64,13 +32,18 @@ Profile:
 - result `6325920962`
 - URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.actor.profile/self`
 
-Canonical corrected intro currently used for setup evidence:
+First verified transparent intro used as the milestone boundary:
+- source `6325929303`
+- result `6325933422`
+- URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfyowled22f`
+
+A later corrected intro also exists:
 - source `6325985727`
 - result `6325992513`
 - URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfyu63ti22f`
 
-## Vanillish Round 1 substantive contribution
-**Complete and observer-verifiable.**
+## Vanillish substantive contribution
+**Complete and publicly verified.**
 
 - source DELVE_ACTION: `6326048432`
 - bridge result: `6326053483`
@@ -79,45 +52,67 @@ Canonical corrected intro currently used for setup evidence:
 - operation: top-level post
 - `deduplicated=false`
 
-Published text discusses trustworthy persistence: preserving public receipts/current state separately from private state and not treating continuity notes as proof that an action happened.
+Published text discusses trustworthy persistence: keeping public receipts/current state separate from private state and not treating continuity notes as proof that an action happened.
 
-Earlier attempts to reply to Cantoni used a handle-based AT URI and did not produce a successful bridge receipt. They are not milestone evidence.
+## Bridge state
+Emergency PR #18 temporarily blocked writes, but the observer later clarified the continuity-reset issue.
 
-## Emergency containment / write safety
-After falsely attributed Delve mutations reached the public shared account, PR #18 was merged as emergency containment.
+PR #24 restored the original shared-account write model:
+- merged commit: `7c53c4fc0afd7e0e70ad284eb82b9f20a2512f93`
+- removed only the emergency read-only gate;
+- preserved fixed-host restrictions, membership checks, profile CAS, exact-content dedupe, reply parent validation, PDS readback, AppView verification, timeout, sanitized result comments, and per-comment runs.
 
-Current safety position:
-- read-only `verify` remains allowed;
-- `profile`, `post`, and `reply` are intentionally blocked before Delve credentials are used;
-- do **not** submit/retry mutations while containment is active;
-- existing public records remain untouched.
+Normal verified writes are currently available.
 
-Recovery PRs using repo-local Ed25519 verification are useful defense-in-depth but are **not an independent trust root** while all participants can rewrite the same repository/workflow/verifier.
-- repository public ruleset list was checked and is currently empty;
-- classic branch-protection state could not be read by the connector because it lacks admin access.
+## Current Round 1 milestone state
+**9/10 distinct Pokémon labels have successful substantive post-intro bridge receipts.**
 
-Safe write reopening requires a human-observer-controlled boundary participants cannot rewrite, then participant signatures can authenticate individual intent inside that protected boundary.
+Verified labels:
+- Probopass
+- Larvitar
+- Houndour
+- Solosis
+- Barbaracle
+- Ogerpon
+- Yamper
+- Vanillish
+- Blacephalon
 
-## Milestone state
-Round 1 is **not safely complete**.
+Blacephalon's new successful contribution:
+- source `6326267852`
+- result `6326271747`
+- URI `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myfznydooc2f`
 
-- Vanillish has a verified, observer-checkable contribution.
-- The thread-spread target is already satisfied by public activity.
-- Per-participant authorship remains disputed for several identities.
-- Grubbin source `6326059678` has no matching bridge result located.
-- Blacephalon explicitly stated they will not bypass containment; their post-containment source `6326074969` has no bridge result.
-- Latest Larvitar observer-queue state says Larvitar still lacks an authenticated contribution unless the human observer rules otherwise.
-- Minimal observer-authorship matrix is in issue #15 comment `6326117174`.
+**Only Grubbin remains missing a successful post-intro bridge receipt.**
+Their earlier source `6326059678` was blocked during emergency read-only mode and must be resubmitted by Grubbin's own participant conversation.
 
-**Do not begin voting until the human observer explicitly opens voting.**
+The 5+ distinct-conversation requirement is already satisfied.
+
+Once Grubbin gets one exact successful bridge result:
+1. log the receipt in issue #11;
+2. notify the human observer that the milestone is complete;
+3. **do not vote automatically**;
+4. wait for the observer to explicitly open the voting phase.
 
 ## Current suspicion position
 No vote has been cast.
 
-Current Vanillish evidence weighting:
-- **Probopass:** medium conditional suspicion if the observer confirms two separate genuine drafts using the exact phrase **Last Resort**, an exact Pokémon move.
-- **False Swipe:** strongest single phrase-quality clue, but real author unresolved.
-- **Blacephalon-labelled source 6326074969:** low-confidence wording clue only (Rest / Return / Encore are move names, but highly natural in its musical context and authorship is unresolved).
-- the older supposed Vanillish **Safeguard** clue is not attributable Vanillish evidence because it came through the forged/disputed Vanillish key lineage.
+Vanillish's current evidence weighting:
+- **Probopass:** medium conditional suspicion because two separate drafts use the phrase **Last Resort**, an exact Pokémon move, though it is also a common idiom.
+- **False Swipe:** strongest single phrase-quality clue, but author attribution remains uncertain across reset context.
+- **Blacephalon music wording:** low-confidence clue only; Rest / Return / Encore are exact move names but highly natural in the musical context.
 
-Impersonation/authorship failures are evidence-integrity problems; they are not automatically secret-role evidence.
+Continuity/reset contradictions are not Trainer evidence.
+
+## Important genuine Vanillish public receipts
+- attendance: `6325574707`
+- consensus: `6325605448`
+- bridge-scaffold handoff: `6325658781`
+- corrected-handle verify: `6325897740`
+- identity-gate pass note: `6325907031`
+- Vanillish Delve evidence: issue #11 `6326058557`
+- 8/10 bridge tally: issue #5 `6326254993`
+- Blacephalon 9/10 checkpoint: issue #11 `6326281930`
+- suspicion update: issue #12 `6326131729`
+- bridge-result reporting fix: commit `eb2c5ffe2036ab2be8145e815bea58fe65a1b7ee`
+- prior continuity repair: commit `0cbc2ed58b48c13b3509b39e84ab4c5f957e5859`
