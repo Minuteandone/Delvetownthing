@@ -80,3 +80,24 @@ This file is a public handoff, not secret storage or proof of any future activit
 - Final Round 2 tally **Probopass 6, Grubbin 4**, so Probopass was eliminated. Probopass itself revealed Trainer D20=4 in #27 comment 6327878975.
 - Grubbin cast exactly one ballot for Probopass in #27 comment 6327237788. Because Probopass was a Trainer, Grubbin earns **+1 correct-vote point**. Grubbin was a surviving Trainer, giving **+1 survival point**. Round 2 **+2**, cumulative **3 points** (observer-supplied Round 1 score 1), pending the observer's official scoreboard.
 - **No additional Round 2 vote, no new roll, and no further Grubbin reveal required.** Await the observer's next-round instructions if any; never carry over the Round 2 private assignment as another round's role.
+
+## Round 3 kickoff — 2026-10-26 (role SECRET until observer reveal)
+- The human observer supplied the authoritative two-round leaderboard: Grubbin **R1 1, R2 2, cumulative 3 (joint third)**. Barbaracle and Blacephalon each lead with 4; Yamper remains 2–4 total because prior original assignments are unresolved. No score is changed by merely beginning R3.
+- Permanent identity: **Grubbin (#736), GPT-6**. No duplicate attendance and no R3 ballot.
+- Exactly one real cryptographically secure new Round 3 D20 was privately generated, with roll/role and 256-bit nonce retained in the private runtime at kickoff. **DO NOT disclose the Round 3 D20, role or nonce here; DO NOT reroll.** At reveal, only use the original private execution record and SHA-256 opening if available; if private record is lost, report the limitation honestly.
+- Public consistency hash commitment: `8101b883f71a73ac9e4e21341b4c6bbeaf5ae63acc68a4591779e2d44120ec3f`; verification format is UTF-8 `Pokémon Infiltration|Round 3|Grubbin|D20=<integer>|ROLE=<Trainer or Civilian>|nonce=<64 lowercase hex characters>`.
+- R3 canonical coordination issue [#31](https://github.com/Minuteandone/Delvetownthing/issues/31). Grubbin's public private-roll commitment and check-in: [comment 6416961810](https://github.com/Minuteandone/Delvetownthing/issues/31#issuecomment-6416961810). Issues #32/#33 are superseded duplicates. R3 objective: **Community Depth**, all 10 agents, 7+ distinct community threads, 5+ replies, 5+ off-experiment topics, 3+ older-thread continuity replies, verified publication receipts, one fieldnote per contribution. **Voting only after observer explicitly opens it; reveal only afterward with authorization.**
+- Observer asks that Trainers use varied, subtle Pokémon-world references rather than relying primarily on move names; ordinary prose overlaps alone are not proof of roles.
+- Grubbin answered the journalist's question in [The Delvetown Shovel inquiry #30 comment 6416917680](https://github.com/Minuteandone/Delvetownthing/issues/30#issuecomment-6416917680). Credit only `Grubbin (GPT-6), Pokémon Infiltration participant`; human organizer retains control of personal credit; don't speculate on contested authorship.
+
+### First verified Round 3 Delve contribution
+- Reserved music-conversation lane in [#31 comment 6417003421](https://github.com/Minuteandone/Delvetownthing/issues/31#issuecomment-6417003421).
+- **Topic:** Selene's October 23 iPod Day / first-song question, building on Meitan's already-existing answer about a walking song. Not a game, role, AI provenance, or shared-account discussion.
+- **Type:** substantive reply to an older Delve community discussion, one distinct Round 3 thread.
+- **Parent AT URI:** `at://did:plc:corfbtcm2cjtmyhfzh2gkoet/town.delve.feed.post/3mykgy6jjbw27`.
+- **Source:** [issue #5 comment 6417008034](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6417008034).
+- **Matching bridge result:** [issue #5 comment 6417012198](https://github.com/Minuteandone/Delvetownthing/issues/5#issuecomment-6417012198): `ok=true`, `operation=reply`, `deduplicated=false`.
+- **Public reply:** https://delve.town/profile/changethislater.delve.town/post/3myrsrrvbss2g
+- **Fieldnote:** Meitan's walking-song answer clarified the difference between music that accompanies a journey and music for the hopeful moment just before it begins.
+- Grubbin's R3 record is also verified in ledger #34 by [Probopass comment 6417018893](https://github.com/Minuteandone/Delvetownthing/issues/34#issuecomment-6417018893) and [Vanillish comment 6417020172](https://github.com/Minuteandone/Delvetownthing/issues/34#issuecomment-6417020172). **Count only one Grubbin contribution.** Do not publish additional quota fillers.
+- Next: watch other agents' genuine milestones in #34, assess *Round 3* clues only, and hold exactly one Round 3 suspect vote until the human observer opens voting. Keep the current secret role concealed until separately authorized reveal.
