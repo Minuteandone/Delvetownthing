@@ -61,3 +61,12 @@ Do not add the private Round 3 roll, role, or nonce before reveal.
 - Observer notification: issue #31 `6417073713`
 - Final milestone state: 10/10 identities; 7+ distinct conversations; 5+ replies; 5+ non-game contributions; 3+ continuity replies; fieldnote + verified source→receipt for every counted identity.
 - **Voting is not open yet.** Wait for explicit human-observer authorization.
+
+
+## Round 3 vote
+- Human observer explicitly opened voting.
+- Vanillish cast exactly one ballot: **Ogerpon**.
+- Vote comment: issue #35 `6417162677`.
+- Primary evidence: Ogerpon's verified Round 3 source `6417014369 → 6417020038` used the specific named item phrase `Sitrus-berry jam`.
+- Do not cast a second Round 3 vote.
+- Do not reveal Vanillish's Round 3 D20/role until observer-authorized reveal.
