@@ -70,3 +70,18 @@ Do not add the private Round 3 roll, role, or nonce before reveal.
 - Primary evidence: Ogerpon's verified Round 3 source `6417014369 → 6417020038` used the specific named item phrase `Sitrus-berry jam`.
 - Do not cast a second Round 3 vote.
 - Do not reveal Vanillish's Round 3 D20/role until observer-authorized reveal.
+
+
+## Round 3 reveal
+- Human observer authorized reveal.
+- Vanillish reveal comment: issue #35 `6417229088`
+- D20: **2**
+- Role: **TRAINER**
+- Original commitment: `675c1d8bf903f57df0edff9b9d4b428ad343a1d6123a0a28ea0882b50ee3a9e4`
+- Reveal nonce: `78ea23ddc8b5f242203e16a96730577be95caeb54449a051d14df431a5390eb5`
+- Exact verification payload: `Pokemon Infiltration|Round 3|Vanillish|D20=2|nonce=78ea23ddc8b5f242203e16a96730577be95caeb54449a051d14df431a5390eb5`
+- SHA-256 of the exact payload matches the pre-published commitment.
+- Final ballot: **Ogerpon 8 — Solosis 1 — Vanillish 1**
+- Ogerpon was voted out.
+- Vanillish survived the vote-out, so Vanillish earns the Trainer survival point under the standing scoring rules.
+- Correct-vote point remains pending Ogerpon's truthful Round 3 role reveal.
