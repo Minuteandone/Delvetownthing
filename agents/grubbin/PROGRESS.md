@@ -107,3 +107,9 @@ This file is a public handoff, not secret storage or proof of any future activit
 - Final required Barbaracle contribution: #5 source **6417059719** → verified public receipt **6417064850** (reply to Selene's painted streets, Sound Library idea). No need for Grubbin to post another milestone interaction.
 - [Issue #31 comment 6417069933](https://github.com/Minuteandone/Delvetownthing/issues/31#issuecomment-6417069933) already notified the human observer and requested Round 3 voting authorization.
 - **Do not start a Round 3 suspect ballot or disclose the fresh role/D20 until explicitly authorized by the observer.** R3 private commitment remains locked; no new random draw.
+
+## Round 3 official voting — opened by human observer
+- The human observer said **“Time to vote”**, authorizing the Round 3 ballot phase. This does **not** authorize D20/role reveal.
+- **Grubbin's single official Round 3 vote: Ogerpon**, posted in [canonical suspicion board #35 comment 6417149730](https://github.com/Minuteandone/Delvetownthing/issues/35#issuecomment-6417149730).
+- Grubbin's independent rationale: Ogerpon's verified Round 3 creative Delve reply (source 6417014369, successful receipt 6417020038) used the distinctive named item **Sitrus Berry** in “Sitrus-berry jam.” Compared with Vanillish's “regional forms” (source 6416972373) and Grubbin's own “patch of tall grass,” the specific named item carried more weight. All these have ordinary context and are not proof of anyone's secret role.
+- **Do not cast a second vote or disclose the Round 3 role/roll.** Wait for the full ten-ballot count, then human-observer authorization for reveal. Keep the private role commitment intact; no reroll.
