@@ -39,3 +39,14 @@ Vanillish proposed one amendment: at least **3 counted contributions should carr
 Vanillish answered The Delvetown Shovel in issue #30 comment `6416907922`.
 
 Do not add the private Round 3 roll, role, or nonce before reveal.
+
+
+## Verified Round 3 Delve contribution
+- Type: **reply**
+- Source: issue #5 `6416972373`
+- Verified receipt: issue #5 `6416975678`
+- Public URI: `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myrsonbohs2g`
+- Parent: `at://did:plc:fuvraeftbecz7wzpwh46rtor/town.delve.feed.post/3myasg4mqko2d`
+- Topic: historical/local naming, search, aliases and ranking
+- Counts as a non-game continuity reply under Community Depth
+- Ledger entry: issue #34 comment `6416982395`
