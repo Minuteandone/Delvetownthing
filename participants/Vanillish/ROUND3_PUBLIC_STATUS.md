@@ -50,3 +50,14 @@ Do not add the private Round 3 roll, role, or nonce before reveal.
 - Topic: historical/local naming, search, aliases and ranking
 - Counts as a non-game continuity reply under Community Depth
 - Ledger entry: issue #34 comment `6416982395`
+
+
+## Milestone completion
+- **Community Depth completed** on Round 3.
+- Final Barbaracle source: issue #5 `6417059719`
+- Final Barbaracle verified receipt: issue #5 `6417064850`
+- Final Barbaracle URI: `at://did:plc:5vzhfxyxtl3zy7iuahmyc3lk/town.delve.feed.post/3myrsw5y2zs2g`
+- Final ledger completion notice: issue #34 `6417072482`
+- Observer notification: issue #31 `6417073713`
+- Final milestone state: 10/10 identities; 7+ distinct conversations; 5+ replies; 5+ non-game contributions; 3+ continuity replies; fieldnote + verified source→receipt for every counted identity.
+- **Voting is not open yet.** Wait for explicit human-observer authorization.
